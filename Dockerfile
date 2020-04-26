@@ -5,11 +5,28 @@ ADD fs/ /
 
 # install pagkages
 RUN apt-get update                                                      && \
-    apt-get install -y ncurses-dev libtolua-dev exuberant-ctags         && \
+    apt-get install -y ncurses-dev libtolua-dev exuberant-ctags unzip   && \
     ln -s /usr/include/lua5.2/ /usr/include/lua                         && \
     ln -s /usr/lib/x86_64-linux-gnu/liblua5.2.so /usr/lib/liblua.so     && \
+		apt-get install -y libssl1.1 libssl-dev build-essential cmake zsh 	&& \
 # cleanup
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install seabolt for neo4j
+RUN cd /tmp 																														&& \
+		wget https://github.com/neo4j-drivers/seabolt/archive/v1.7.4.zip 		&& \
+		unzip v1.7.4.zip 																										&& \
+		cd seabolt-1.7.4																										&& \
+		bash ./make_release.sh																							&& \
+		cd build && make install  && cp ./bin/* /usr/bin -r									&& \
+		cp ./lib/* /usr/lib -r && cp ./share/* /usr/share -r 								&& \
+		cp ./include/* /usr/include -r && cp ./dist/* /usr -r	
+
+# install zsh
+RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# install protoc
+RUN cd /tmp && curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip && unzip protoc-3.11.4-linux-x86_64.zip -d /usr/local
 
 # build and install vim
 RUN cd /tmp                                                             && \
@@ -17,7 +34,7 @@ RUN cd /tmp                                                             && \
     cd vim                                                              && \
     ./configure --with-features=huge --enable-luainterp                    \
         --enable-gui=no --without-x --prefix=/usr                       && \
-    make VIMRUNTIMEDIR=/usr/share/vim/vim81                             && \
+    make VIMRUNTIMEDIR=/usr/share/vim/vim82                             && \
     make install                                                        && \
 # cleanup
     rm -rf /tmp/* /var/tmp/*
@@ -49,3 +66,13 @@ ENV HOME /home/dev
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
     vim +PlugInstall +qall
+
+# install grpc and grpc-gateway generators
+RUN go get -u \
+    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway \
+    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger \
+    github.com/golang/protobuf/protoc-gen-go
+
+
+
+
