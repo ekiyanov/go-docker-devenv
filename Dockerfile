@@ -68,11 +68,21 @@ RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     vim +PlugInstall +qall
 
 # install grpc and grpc-gateway generators
-RUN go get -u \
-    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway \
-    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger \
-    github.com/golang/protobuf/protoc-gen-go
+RUN cd /tmp && git clone -b v1.16.0 https://github.com/grpc-ecosystem/grpc-gateway && cd grpc-gateway/protoc-gen-swagger && go install && cd ../protoc-gen-grpc-gateway && go install
+RUN GOPROXY=http://172.17.0.1:8888,direct go get -d -v \
+    google.golang.org/protobuf/cmd/protoc-gen-go \
+    google.golang.org/grpc/cmd/protoc-gen-go-grpc
+
+#RUN GOPROXY=http://172.17.0.1:8888,direct go get -u -v \
+#    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway \
+#    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger \
+#    github.com/golang/protobuf/protoc-gen-go
 
 
+RUN yes | sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+RUN go get github.com/go-delve/delve/cmd/dlv
 
+RUN vim +GoInstallBinaries
+
+CMD /usr/bin/zsh
 
