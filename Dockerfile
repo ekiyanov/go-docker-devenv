@@ -26,7 +26,7 @@ RUN cd /tmp 																														&& \
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # install protoc
-RUN cd /tmp && curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip && unzip protoc-3.11.4-linux-x86_64.zip -d /usr/local
+RUN cd /tmp && curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protoc-3.18.0-linux-x86_64.zip && unzip protoc-3.18.0-linux-x86_64.zip -d /usr/local && chmod +x /usr/local/bin/protoc
 
 # build and install vim
 RUN cd /tmp                                                             && \
@@ -68,10 +68,14 @@ RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     vim +PlugInstall +qall
 
 # install grpc and grpc-gateway generators
-RUN cd /tmp && git clone -b v1.16.0 https://github.com/grpc-ecosystem/grpc-gateway && cd grpc-gateway/protoc-gen-swagger && go install && cd ../protoc-gen-grpc-gateway && go install
-RUN GOPROXY=http://172.17.0.1:8888,direct go get -d -v \
-    google.golang.org/protobuf/cmd/protoc-gen-go \
-    google.golang.org/grpc/cmd/protoc-gen-go-grpc
+RUN go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.6.0
+RUN go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.6.0
+
+# protoc-gen-go-grpc install protoc-gen-go
+# RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.27 
+#RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.23
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
 
 #RUN GOPROXY=http://172.17.0.1:8888,direct go get -u -v \
 #    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway \
@@ -82,7 +86,13 @@ RUN GOPROXY=http://172.17.0.1:8888,direct go get -d -v \
 RUN yes | sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 RUN go get github.com/go-delve/delve/cmd/dlv
 
-RUN vim +GoInstallBinaries
+RUN vim +GoInstallBinaries +qall
+
+# Install swagger generator
+RUN cd /tmp && git clone --depth=1 https://github.com/go-swagger/go-swagger && \
+    cd /tmp/go-swagger/cmd/swagger && go install
+
+COPY cheatsheet.md /etc/motd
 
 CMD /usr/bin/zsh
 

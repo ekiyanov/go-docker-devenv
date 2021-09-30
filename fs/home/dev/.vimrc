@@ -3,6 +3,7 @@ set nocompatible              " be iMproved
 call plug#begin()
 
 " custom plugins
+Plug 'sheerun/vim-polyglot'
 Plug 'fatih/vim-go'
 Plug 'majutsushi/tagbar'
 Plug 'shougo/neocomplete.vim'
@@ -13,6 +14,7 @@ Plug 'jistr/vim-nerdtree-tabs'
 Plug 'mbbill/undotree'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'scrooloose/nerdcommenter'
+Plug 'ghifarit53/tokyonight-vim'
 
 " all of your Plugins must be added before the following line
 call plug#end()            " required
@@ -25,6 +27,7 @@ set number
 set cursorline
 set scrolloff=999
 set encoding=utf-8
+set termguicolors
 colorscheme molokai
 
 " plugin customizations
@@ -41,11 +44,16 @@ let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 
+
+" tokyonight theme
+let g:tokyonight_enable_italic = 1
+
+
 " vim-airline
 set laststatus=2
 let g:bufferline_echo = 0
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme = 'dark'
+let g:airline_theme = 'tokyonight'
 
 " tagbar
 let g:tagbar_type_go = {
