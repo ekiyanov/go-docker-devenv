@@ -100,5 +100,7 @@ USER root
 RUN chmod 777 -R /usr/local/include/google
 USER dev
 
+WORKDIR /app
+
 CMD /usr/bin/zsh
 
