@@ -59,6 +59,8 @@ RUN adduser dev --disabled-password --gecos ""                          && \
     echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers     && \
     chown -R dev:dev /home/dev /go
 
+RUN cd /tmp && git clone https://github.com/googleapis/googleapis && mv /tmp/googleapis/google/* /usr/local/include/google/ && chmod +X -R /usr/local/include/google
+
 USER dev
 ENV HOME /home/dev
 
@@ -93,6 +95,10 @@ RUN cd /tmp && git clone --depth=1 https://github.com/go-swagger/go-swagger && \
     cd /tmp/go-swagger/cmd/swagger && go install
 
 COPY cheatsheet.md /etc/motd
+
+USER root
+RUN chmod 777 -R /usr/local/include/google
+USER dev
 
 CMD /usr/bin/zsh
 
