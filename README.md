@@ -1,3 +1,6 @@
+Initially forked from https://github.com/mbrt
+
+
 # go-vim Docker image
 This Docker image adds [Go](https://golang.org/) tools and the following vim plugins to the [official Go image](https://registry.hub.docker.com/_/golang/):
 
@@ -48,10 +51,10 @@ Google APIs Should be picked up automatically by protoc from following directory
 Image has Delve installed, same as plugins for vim. Feel free to
 
     dlv test -- -test.run=NAME_OF_FUNC
-		dlv debug SOURCES.go
+	dlv debug SOURCES.go
 
 or inside vim
 
     :GoDebugStart
-		:GoDebugTest
-		:GoDebugTestFunc
+	:GoDebugTest
+	:GoDebugTestFunc
